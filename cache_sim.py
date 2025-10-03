@@ -66,7 +66,7 @@ for i, addr in enumerate(ACCESS_SEQ, 1):
 
 print("\n=== FINAL CACHE CONTENTS ===")
 for idx in range(NUM_LINES):
-    print(f"Index {idx}: {line_desc(cache[idx)}")
+    print(f"Index {idx}: {line_desc(cache[idx])}")
 
 total = len(ACCESS_SEQ)
 hit_rate = hits / total if total else 0.0
@@ -74,4 +74,5 @@ print("\n=== STATS ===")
 print(f"Hits   : {hits}")
 print(f"Misses : {misses}")
 print(f"Hit rate: {hits}/{total} = {hit_rate:.2%}")
+
 
