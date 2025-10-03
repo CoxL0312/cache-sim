@@ -46,6 +46,7 @@ for i, addr in enumerate(ACCESS_SEQ, 1):
 
     if cache[idx] == blk:
         print("  HIT – memory word is in the cache at index", idx)
+        hits += 1
     else:
         misses += 1
         prev = cache[idx]
@@ -74,5 +75,6 @@ print("\n=== STATS ===")
 print(f"Hits   : {hits}")
 print(f"Misses : {misses}")
 print(f"Hit rate: {hits}/{total} = {hit_rate:.2%}")
+
 
 
