@@ -11,9 +11,9 @@ ACCESS_SEQ = [30, 31, 32, 33, 30, 31, 34, 35, 40, 41, 32, 30, 40, 41, 50, 43, 44
 
 # Derived
 NUM_LINES = TOTAL_SIZE // BLOCK_SIZE  # = 2
+cache = [None] * NUM_LINES
 
 # Each line holds either None or a block number (tag)
-cache = [None] * NUM_LINES
 
 def block_num(addr):     # which memory block this word lives in
     return addr // BLOCK_SIZE
@@ -25,8 +25,15 @@ def block_words(block):  # the 4-word range for this block
     start = block * BLOCK_SIZE
     return start, start + BLOCK_SIZE - 1
 
+def line_desc(tag):
+    if tag is None: return "∅"
+    s, e = block_words(tag)
+    return f"block {tag} [{s}-{e}]"
+
 print(f"Direct-Mapped Cache  |  total={TOTAL_SIZE} words, block={BLOCK_SIZE} words")
 print(f"Lines/indices: {NUM_LINES}  -> indices: {list(range(NUM_LINES))}\n")
+
+hits, misses = 0, 0
 
 for i, addr in enumerate(ACCESS_SEQ, 1):
     blk = block_num(addr)
@@ -40,13 +47,13 @@ for i, addr in enumerate(ACCESS_SEQ, 1):
     if cache[idx] == blk:
         print("  HIT – memory word is in the cache at index", idx)
     else:
+        misses += 1
         prev = cache[idx]
         if prev is None:
             print("  MISS – line empty at this index")
         else:
             p0, p1 = block_words(prev)
             print(f"  MISS – evict block {prev} (words {p0}-{p1}) from index {idx}")
-
         cache[idx] = blk
         print(f"  Load entire memory block {blk} (words {start}-{end}) into cache index {idx}")
 
@@ -56,3 +63,15 @@ for i, addr in enumerate(ACCESS_SEQ, 1):
         s, e = block_words(tag)
         return f"blk {tag} [{s}-{e}]"
     print(f"  Cache now -> index 0: {line_desc(cache[0])} | index 1: {line_desc(cache[1])}\n")
+
+print("\n=== FINAL CACHE CONTENTS ===")
+for idx in range(NUM_LINES):
+    print(f"Index {idx}: {line_desc(cache[idx)}")
+
+total = len(ACCESS_SEQ)
+hit_rate = hits / total if total else 0.0
+print("\n=== STATS ===")
+print(f"Hits   : {hits}")
+print(f"Misses : {misses}")
+print(f"Hit rate: {hits}/{total} = {hit_rate:.2%}")
+
